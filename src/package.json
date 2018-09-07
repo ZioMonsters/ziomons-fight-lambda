@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "cryptomon-fight-lambda",
+  "name": "cryptomon-fight-lambda-${env}",
   "description": "",
   "author": " <>",
   "contributors": [
