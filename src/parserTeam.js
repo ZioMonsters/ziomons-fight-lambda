@@ -12,6 +12,5 @@ module.exports = team => {
             new monster(team[2], team[7], team[12], team[17]),
             new monster (team[3], team[8], team[13], team[18]),
             new monster (team[4], team[9], team[14], team[19])
-        ]
+        ];
     }
-}
