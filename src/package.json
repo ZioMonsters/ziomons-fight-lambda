@@ -1,0 +1,13 @@
+{
+  "private": true,
+  "name": "cryptomon-fight-lambda",
+  "description": "",
+  "author": " <>",
+  "contributors": [
+    {
+      "name": "",
+      "email": ""
+    }
+  ],
+  "dependencies": {}
+}
