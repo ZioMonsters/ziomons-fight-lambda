@@ -1,6 +1,6 @@
 const AWS = require('aws-sdk');
 const TableName = `cryptomon-clashes-${process.env.NODE_ENV}`;
-const documentClient = new AWS.DynamoDB.DocumentClient();
+const documentClient = new AWS.DynamoDB.DocumentClient('eu-west-1');
 const parserTeam = require('./parserTeam.js');
 
 exports.handler = (event, context, callback) => {
@@ -15,44 +15,45 @@ exports.handler = (event, context, callback) => {
         bonusWinner: 1,
         _winnerId: 1,
         _moneyWon: 1000
-    }
+    };
 
     //const { Records: [data]: body } = event;
     //const { clashId, _attacker: attacker, _defender: defender, firstTeam: _team1, secondTeam: _team2, bonusWinner: _bonusWinner, winner: _winnerId, bet: _moneyWon } = body;
   Promise.all([
     // promise che scrive nella table la battaglia (partition key = clashId, sortKey = user)
     // Results(msg.sender, _defender.addr, _team1, _team2,  uint8(params[11]), _winnerId, _moneyWon)
-    documentClient.batchWrite({
+    documentClient.batchWriteItem({
         RequestItems: {
             TableName: [
                     {
                     PutRequest: {
                         Item: {
-                            clashId,
-                            user: attacker,
-                            'myTeam': firstTeam,
-                            'opponentTeam': secondTeam,
-                            bonusWinner,
-                            winner,
-                            bet
+                            'clashId': data.clashId,
+                            'user': data.attacker,
+                            'opponent': data.defender,
+                            'userTeam': data._team1.toString(),
+                            'opponentTeam': data._team2.toString(),
+                            'bonusWinner': data.bonusWinner,
+                            'result': (data._winnerId === 1)? 'won':(data._winnerId === 2)? 'lost': 'drawn',
+                            'bet': data.bet
                         },
                     },
                     PutRequest: {
                         Item: {
-                            clashId,
-                            user: defender,
-                            'myTeam': secondTeam,
-                            'opponentTeam': firstTeam,
-                            bonusWinner,
-                            winner: (_winnerId === 2)? 1:(_winnerId === 1)? 2: 0,
-                            bet
+                            'clashId': data.clashId,
+                            'user': data.defender,
+                            'opponent': data.attacker,
+                            'userTeam': data._team2.toString(),
+                            'opponentTeam': data._team1.toString(),
+                            'bonusWinner': data.bonusWinner,
+                            'result': (data._winnerId === 2)? 'won':(data._winnerId === 'lost')? 2: 'drawn',
+                            'bet': data.bet
                         }
                     }
                 }
             ]
         }
-    }).promise(
-    ),
+    }).promise(),
     documentClient.put({
         'TableName': 'events',
         Item: {
@@ -63,4 +64,5 @@ exports.handler = (event, context, callback) => {
     // promise che aggiorna la table events segnando l'evento come
 ])
     .then(() => callback(null, event))
+    .catch(console.error());
 }
