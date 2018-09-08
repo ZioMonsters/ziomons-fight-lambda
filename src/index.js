@@ -19,8 +19,8 @@ exports.handler = (event, context, callback) => {
                                 'clashId': data.clashId,
                                 'user': data._attacker,
                                 'opponent': data._defender,
-                                'userTeam': data._team1.toString(),
-                                'opponentTeam': data._team2.toString(),
+                                'userTeam': data._team1,
+                                'opponentTeam': data._team2,
                                 'bonusWinner': data.bonusWinner,
                                 'result': (data._winnerId === 1)? 'won':(data._winnerId === 2)? 'lost': 'drawn',
                                 'bet': data.bet
@@ -45,28 +45,13 @@ exports.handler = (event, context, callback) => {
         }
     }).promise()
     .catch(console.error),
-//
-//     //promise che aggiorna la table events segnando l'evento come
-    // documentClient.put({
-    //     TableName: ClashesTable,
-    //     Item: {
-    //         'clashId': data.clashId,
-    //         'user': data._defender,
-    //         'opponent': data._attacker,
-    //         'userTeam': data._team2.toString(),
-    //         'opponentTeam': data._team1.toString(),
-    //         'bonusWinner': data.bonusWinner,
-    //         'result': (data._winnerId === 2)? 'won':(data._winnerId === 'lost')? 2: 'drawn',
-    //         'bet': data.bet
-    //     }
-    // }).promise().catch(console.error),
 
     documentClient.put({
         TableName: EventTable,
         Item: {
-            'transactionId': data.clashId,
-            'type': 'clash',
-            'processed': true
+            transactionId: data.clashId,
+            type: 'clash',
+            processed: true
         }
     }).promise().catch(console.error)
 ])
