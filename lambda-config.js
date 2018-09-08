@@ -6,7 +6,7 @@ module.exports = env => ({
     Handler: "index.handler",
     RoleName: `cryptomon-fight-lambda-${env}`,
     MemorySize: 128,
-    Timeout: 3,
+    Timeout: 30,
     Runtime: "nodejs8.10",
     Environment: {
       Variables: {
